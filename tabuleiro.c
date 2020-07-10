@@ -389,7 +389,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
           printf("Deu bom\n");
         }
         else {
-          printf("Deu ruim\n");
+          printf("Deu ruim\n"); // mensagem
         }
       }      
 
