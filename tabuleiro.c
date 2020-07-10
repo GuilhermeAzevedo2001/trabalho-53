@@ -198,7 +198,6 @@ void cheat_mode(char **pecas, char *disponivel, int quant_disponivel) {
     }
     coluna = rand() % 36;
   }
-
   return;
 }
 
@@ -243,6 +242,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
   int quant_pecas = 108;  // Quantidade total de peças
   int lim_linha = 1;  // Quantidade de linhas que o usuario pode escolher 
   int lim_coluna = 1; // Quantidade de colunas que o usuario pode escolher 
+  int valida = 1; // Verifica se a jogada é valida
 
   int seleciona = 0;
   int flag = 0;
@@ -256,142 +256,148 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
     }
     quant_disponivel = 12;
+    
     do {
-      printf("------------------------\n");
-      verde();
-      printf("Jogada de ");
-      amarelo();
-      printf("%s\n", jogadores[quant_jog]);
-      negrito();
-      printf("Pecas disponiveis: ");
-      padrao();
-      imprimir_disponivel(disponivel, quant_disponivel);
-
-      seleciona = opcoes(mode);   // Opções selecionadas pelo jogador da rodada atual
-
-      if(mode == 1 && seleciona == 2) {   // Troca das peças
-        do {
-          cheat_mode(pecas, disponivel, quant_disponivel);
-          imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
-          printf("------------------------\n");
-          vermelho();
-          printf("Jogada de %s\n", jogadores[quant_jog]);        
-          negrito();
-          printf("Pecas disponiveis: ");
-          padrao();
-          imprimir_disponivel(disponivel, quant_disponivel);
-          seleciona = opcoes(mode);   
-        } while(seleciona == 2);     
-      }
-
-      if(mode == 1 && seleciona == 3) {   // Passa a vez para o proximo adversario
-        break;
-      }
-      if(mode == 2 && seleciona == 2) {
-        break;
-      }
-
-      existe = 0;
-      negrito();
-      printf("Escolha a peca desejada: ");
-      padrao();
-
-      do {    // Verifica se a peça selecionada pelo usuario existe
-        setbuf(stdin, NULL);
-        fgets(jogada, 10, stdin);  
-        
-        for(i = 0; i < quant_disponivel; i += 2) {
-          if((jogada[0] == disponivel[i]) && (jogada[1] == disponivel[i + 1])) {
-            existe = 1;
-          }      
-        }
-        if(!existe) {
-          vermelho();
-          printf("Peca invalida, escolha novamente: "); 
-          padrao();
-        }
-      } while(!existe);
-      
       do {
+        if(!valida) {
+          imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
+        }      
+        printf("------------------------\n");
+        verde();
+        printf("Jogada de ");
+        amarelo();
+        printf("%s\n", jogadores[quant_jog]);
         negrito();
-        printf("Linha que deseja jogar: ");
+        printf("Pecas disponiveis: ");
         padrao();
-        
-        char *pos_aux;
-        pos_aux = (char *) malloc(sizeof(char) * 100);
-        if(pos_aux == NULL) {
-          vermelho();
-          printf("Não foi possivel alocar memoria\n");
-          padrao();
-          exit(1);
+        imprimir_disponivel(disponivel, quant_disponivel);
+
+        seleciona = opcoes(mode);   // Opções selecionadas pelo jogador da rodada atual
+
+        if(mode == 1 && seleciona == 2) {   // Troca das peças
+          do {
+            cheat_mode(pecas, disponivel, quant_disponivel);
+            imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
+            printf("------------------------\n");
+            vermelho();
+            printf("Jogada de %s\n", jogadores[quant_jog]);        
+            negrito();
+            printf("Pecas disponiveis: ");
+            padrao();
+            imprimir_disponivel(disponivel, quant_disponivel);
+            seleciona = opcoes(mode);   
+          } while(seleciona == 2);     
         }
 
-        do {
-          existe = 0;
-          fgets(pos_aux, 100, stdin);
-          if(is_alpha(pos_aux) == 1) {
-            vermelho();
-            printf("Digite um numero: ");
-            padrao();
-            existe = 1;
+        if(mode == 1 && seleciona == 3) {   // Passa a vez para o proximo adversario
+          break;
+        }
+        if(mode == 2 && seleciona == 2) {
+          break;
+        }
+
+        existe = 0;
+        negrito();
+        printf("Escolha a peca desejada: ");
+        padrao();
+      
+        do {    // Verifica se a peça selecionada pelo usuario existe
+          setbuf(stdin, NULL);
+          fgets(jogada, 10, stdin);  
+          
+          for(i = 0; i < quant_disponivel; i += 2) {
+            if((jogada[0] == disponivel[i]) && (jogada[1] == disponivel[i + 1])) {
+              existe = 1;
+            }      
           }
-          else {
-            pos1 = atoi(pos_aux);
-            if(pos1 < coluna_esquerda || pos1 >= lim_linha) {
+          if(!existe) {
+            vermelho();
+            printf("Peca invalida, escolha novamente: "); 
+            padrao();
+          }
+        } while(!existe);
+
+        do {
+          negrito();
+          printf("Linha: ");
+          padrao();
+          
+          char *pos_aux;
+          pos_aux = (char *) malloc(sizeof(char) * 100);
+          if(pos_aux == NULL) {
+            vermelho();
+            printf("Não foi possivel alocar memoria\n");
+            padrao();
+            exit(1);
+          }
+                  
+          do {
+            existe = 0;
+            setbuf(stdin, NULL);
+            fgets(pos_aux, 100, stdin);
+            if(is_alpha(pos_aux) == 1) {
               vermelho();
-              printf("Linha invalida, digite novamente: ");
+              printf("Digite um numero: ");
               padrao();
               existe = 1;
             }
-          }          
-        } while(existe);
+            else {
+              pos1 = atoi(pos_aux);
+              if(pos1 < coluna_esquerda || pos1 >= lim_linha) {
+                vermelho();
+                printf("Linha invalida, digite novamente: ");
+                padrao();
+                existe = 1;
+              }
+            }          
+          } while(existe);
 
-        negrito();
-        printf("Coluna que deseja jogar: ");
-        padrao();
-        do {
-          existe = 0;
-          scanf("%s", pos_aux);
-          if(is_alpha(pos_aux) == 1) {
-            vermelho();
-            printf("Digite um numero: ");
-            padrao();
-            existe = 1;
-          }
-          else {
-            pos2 = atoi(pos_aux);
-            if(pos2 < linha_superior || pos2 >= lim_coluna) {
+          negrito();
+          printf("Coluna: ");
+          padrao();
+          do {
+            existe = 0;
+            scanf("%s", pos_aux);
+            if(is_alpha(pos_aux) == 1) {
               vermelho();
-              printf("Coluna invalida, digite novamente: ");
+              printf("Digite um numero: ");
               padrao();
               existe = 1;
             }
+            else {
+              pos2 = atoi(pos_aux);
+              if(pos2 < linha_superior || pos2 >= lim_coluna) {
+                vermelho();
+                printf("Coluna invalida, digite novamente: ");
+                padrao();
+                existe = 1;
+              }
+            }
+          } while(existe);
+          
+          free(pos_aux);
+          // Relaciona as posições impressas com as posições da matrzi tabuleiro 
+
+          i = ref_linha + pos1;
+          j = ref_coluna + pos2;
+          j = 2 * j; 
+
+          if(tabuleiro[i][j] != ' ') {
+            vermelho();
+            printf("Posicao ja preenchida, insira novamente\n");
+            padrao();
+          }                             
+        } while(tabuleiro[i][j] != ' '); 
+
+        if(linha != 1 && tabuleiro[i][j] == ' ') {
+          valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna);  
+          if(!valida) {
+            vermelho();
+            printf("Jogada invalida\n");
+            padrao();
           }
-        } while(existe);
-        
-        free(pos_aux);
-        // Relaciona as posições impressas com as posições da matrzi tabuleiro
-
-        i = ref_linha + pos1;
-        j = ref_coluna + pos2;
-        j = 2 * j; 
-
-        if(tabuleiro[i][j] != ' ') {
-          vermelho();
-          printf("Posicao ja preenchida, insira novamente\n");
-          padrao();
-        }
-      } while(tabuleiro[i][j] != ' ');
-
-      if(linha != 1) {
-        int h = jog_valida(tabuleiro, jogada, i, j, linha, coluna);
-        if(h == 1) {
-          printf("Deu bom\n");
-        }
-        else {
-          printf("Deu ruim\n"); // mensagem
-        }
-      }      
+        } 
+      } while(!valida);
 
       tabuleiro[i][j] = jogada[0];
       tabuleiro[i][j + 1] = jogada[1];
@@ -423,6 +429,13 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
           }
         }    
       }
+      for(i = 0; i < 6 ; i++) { 
+        for(j = 0; j < 36; j += 2) {
+          printf("%c%c ", pecas[i][j], pecas[i][j+1]);
+        }
+        printf("\n");
+      }
+
       
       // Verificação na linha superior
       flag = 0;

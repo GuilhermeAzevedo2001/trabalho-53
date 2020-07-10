@@ -73,7 +73,7 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
       }
     }
   }
-  printf("\nvalida =  %d, aux = %d\n", valida, aux_valida);
+
   if(valida == aux_valida) {
     return 1;
   }
