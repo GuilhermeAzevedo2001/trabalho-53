@@ -186,11 +186,11 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
     }
   }
 
-  printf("set = %d\n", set);
-  printf("ref linha - %d\n", ref_linha);
-  printf("ref coluna - %d\n", ref_coluna);
-  printf("pos1 - %d\n", pos1);
-  printf("pos2 - %d\n", pos2);
+  //printf("set = %d\n", set);
+  //printf("ref linha - %d\n", ref_linha);
+  //printf("ref coluna - %d\n", ref_coluna);
+  //printf("pos1 - %d\n", pos1);
+  //printf("pos2 - %d\n", pos2);
   if(ref_linha == pos1 && set == 0) {
     set = 1;
   }

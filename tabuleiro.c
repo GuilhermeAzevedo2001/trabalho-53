@@ -200,6 +200,11 @@ void cheat_mode(char **pecas, char *disponivel, int quant_disponivel) {
   return;
 }
 
+void cont_pontos(char **tabuleiro, int pos1, int pos2, int *pontos) {
+  
+  // Posições a direita da peça
+}
+
 void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog, int mode) {
 
   int linha = 1;
@@ -207,10 +212,46 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
   int coluna = 2;
   int coluna_esquerda = 0;
   int i, j;         // Contadores 
-  char *disponivel = NULL;
+  char **disponivel;
+  int *num_sorteio;
+  int *pontos;
 
-  //alocar_tam(disponivel, 12);
-  disponivel = (char *) malloc(sizeof(char) * 12);
+  disponivel = (char **) malloc(sizeof(char) * num_jog);
+  if(disponivel == NULL) {
+    vermelho();
+    printf("Não foi possivel alocar memoria\n");
+    padrao();
+    exit(1);
+  }
+  for(i = 0; i < num_jog; i++) {
+    disponivel[i] = (char *) malloc(sizeof(char) * 12);
+    if(disponivel[i] == NULL) {
+      vermelho();
+      printf("Não foi possivel alocar memoria\n");
+      padrao();
+      exit(1);
+    }
+  }
+  
+  num_sorteio = (int *) malloc(sizeof(int) * num_jog);
+  if(num_sorteio == NULL) {
+    vermelho();
+    printf("Não foi possivel alocar memoria\n");
+    padrao();
+    exit(1);
+  }
+  // Inicializa o vetor num_sorteio
+  for(i = 0; i < num_jog; i++) {
+    num_sorteio[i] = 12; // Inicializa com 6 peças 
+  }
+  
+  pontos = (int *) malloc(sizeof(char) * num_jog);
+  if(pontos == NULL) {
+    vermelho();
+    printf("Não foi possivel alocar memoria\n");
+    padrao();
+    exit(1);
+  }
 
   // Aloca a primeiro linha e as duas colunas iniciais 
   tabuleiro = NULL;
@@ -251,11 +292,10 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
     if(quant_jog == num_jog) {
       quant_jog = 0;
     }
-    pecas_disponiveis(pecas, disponivel); // Sortei de novas peças 
-    if(quant_disponivel != 0) {
+    pecas_disponiveis(pecas, disponivel[quant_jog], num_sorteio[quant_jog], num_jog);
+    if(num_sorteio[quant_jog] != 0) {
       imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
     }
-    quant_disponivel = 12;
     sair = 0;
     do {
       do {
@@ -270,12 +310,12 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         negrito();
         printf("Pecas disponiveis: ");
         padrao();
-        imprimir_disponivel(disponivel, quant_disponivel);
+        imprimir_disponivel(disponivel[quant_jog], quant_disponivel);
         seleciona = opcoes(mode);   // Opções selecionadas pelo jogador da rodada atual
 
         if(mode == 1 && seleciona == 2) {   // Troca das peças
           do {
-            cheat_mode(pecas, disponivel, quant_disponivel);
+            cheat_mode(pecas, disponivel[quant_jog], quant_disponivel);
             imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
             printf("------------------------\n");
             verde();
@@ -285,7 +325,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
             negrito();
             printf("Pecas disponiveis: ");
             padrao();
-            imprimir_disponivel(disponivel, quant_disponivel);
+            imprimir_disponivel(disponivel[quant_jog], quant_disponivel);
             seleciona = opcoes(mode);   
           } while(seleciona == 2);     
         }
@@ -309,7 +349,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
           fgets(jogada, 10, stdin);  
           
           for(i = 0; i < quant_disponivel; i += 2) {
-            if((jogada[0] == disponivel[i]) && (jogada[1] == disponivel[i + 1])) {
+            if((jogada[0] == disponivel[quant_jog][i]) && (jogada[1] == disponivel[quant_jog][i + 1])) {
               existe = 1;
             }      
           }
@@ -411,12 +451,17 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       tabuleiro[i][j] = jogada[0];
       tabuleiro[i][j + 1] = jogada[1];
 
+      // Contabiliza pontos linha
+      
+      
+    
+
       // Apaga do vetor disponivel a peça jogada
       int k = 0, elimina = 0;
-      for(i = 0; i < quant_disponivel; i += 2) {
-        if(disponivel[i] != jogada[0] || disponivel[i + 1] != jogada[1] || elimina) {
-          disponivel[k] = disponivel[i];
-          disponivel[k + 1] = disponivel[i + 1];
+      for(i = 0; i < num_sorteio[quant_jog]; i += 2) {
+        if(disponivel[quant_jog][i] != jogada[0] || disponivel[quant_jog][i + 1] != jogada[1] || elimina) {
+          disponivel[quant_jog][k] = disponivel[quant_jog][i];
+          disponivel[quant_jog][k + 1] = disponivel[quant_jog][i + 1];
           k += 2;      
         }
         else {
@@ -424,10 +469,10 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         }        
       }
       // Reinicializa o valor das ultimas posições do vetor disponivel
-      quant_disponivel += -2;
+      num_sorteio[quant_jog] += -2;
       //alocar_tam(disponivel, quant_disponivel);
-      disponivel[quant_disponivel] = ' ';
-      disponivel[quant_disponivel + 1]  = ' ';
+      disponivel[quant_jog][num_sorteio[quant_jog]] = ' ';
+      disponivel[quant_jog][num_sorteio[quant_jog] + 1]  = ' ';
 
       // Apaga do da matriz pecas(onde são listadas todas as peças do jogo)a peça que foi inserida do tabuleiro
       flag = 0;  
@@ -601,7 +646,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         padrao();
       }
     } while(quant_disponivel > 0);
-    
+  
     quant_jog++; // proximo jogador
     linha_atual = 1;
     
