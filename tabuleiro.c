@@ -16,7 +16,6 @@ void imprimir_tabuleiro(char **tabuleiro, int linha, int coluna, int linha_super
     else {
       printf("    %d", linha_superior);
     } 
-    
     linha_superior++;
   }
   printf("\n");
@@ -242,8 +241,9 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
   int quant_pecas = 108;  // Quantidade total de peças
   int lim_linha = 1;  // Quantidade de linhas que o usuario pode escolher 
   int lim_coluna = 1; // Quantidade de colunas que o usuario pode escolher 
-  int valida = 1; // Verifica se a jogada é valida
-
+  int valida = 1; // Verifica se a jogada é valido
+  int linha_atual = 1;
+  int sair;
   int seleciona = 0;
   int flag = 0;
   
@@ -251,12 +251,12 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
     if(quant_jog == num_jog) {
       quant_jog = 0;
     }
-    pecas_disponiveis(pecas, disponivel); 
+    pecas_disponiveis(pecas, disponivel); // Sortei de novas peças 
     if(quant_disponivel != 0) {
       imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
     }
     quant_disponivel = 12;
-    
+    sair = 0;
     do {
       do {
         if(!valida) {
@@ -271,7 +271,6 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         printf("Pecas disponiveis: ");
         padrao();
         imprimir_disponivel(disponivel, quant_disponivel);
-
         seleciona = opcoes(mode);   // Opções selecionadas pelo jogador da rodada atual
 
         if(mode == 1 && seleciona == 2) {   // Troca das peças
@@ -279,8 +278,10 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
             cheat_mode(pecas, disponivel, quant_disponivel);
             imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
             printf("------------------------\n");
-            vermelho();
-            printf("Jogada de %s\n", jogadores[quant_jog]);        
+            verde();
+            printf("Jogada de ");
+            amarelo();
+            printf("%s\n", jogadores[quant_jog]);   
             negrito();
             printf("Pecas disponiveis: ");
             padrao();
@@ -290,9 +291,11 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         }
 
         if(mode == 1 && seleciona == 3) {   // Passa a vez para o proximo adversario
+          sair = 1;
           break;
         }
         if(mode == 2 && seleciona == 2) {
+          sair = 1;
           break;
         }
 
@@ -390,26 +393,35 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         } while(tabuleiro[i][j] != ' '); 
 
         if(linha != 1 && tabuleiro[i][j] == ' ') {
-          valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna);  
+          valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna, linha_atual);  
+          linha_atual = 0;
           if(!valida) {
             vermelho();
             printf("Jogada invalida\n");
             padrao();
           }
-        } 
-      } while(!valida);
+        }
+        //linha_atual = 0; 
+      } while(!valida);  // enquanto a jogada não for valida
 
+      if(sair == 1) { // troca o jogador
+        linha_atual = 1;
+        break;
+      }
       tabuleiro[i][j] = jogada[0];
       tabuleiro[i][j + 1] = jogada[1];
 
       // Apaga do vetor disponivel a peça jogada
-      int k = 0;
+      int k = 0, elimina = 0;
       for(i = 0; i < quant_disponivel; i += 2) {
-        if(disponivel[i] != jogada[0] || disponivel[i + 1] != jogada[1]) {
+        if(disponivel[i] != jogada[0] || disponivel[i + 1] != jogada[1] || elimina) {
           disponivel[k] = disponivel[i];
           disponivel[k + 1] = disponivel[i + 1];
           k += 2;      
-        } 
+        }
+        else {
+          elimina = 1;
+        }        
       }
       // Reinicializa o valor das ultimas posições do vetor disponivel
       quant_disponivel += -2;
@@ -429,13 +441,6 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
           }
         }    
       }
-      for(i = 0; i < 6 ; i++) { 
-        for(j = 0; j < 36; j += 2) {
-          printf("%c%c ", pecas[i][j], pecas[i][j+1]);
-        }
-        printf("\n");
-      }
-
       
       // Verificação na linha superior
       flag = 0;
@@ -598,10 +603,11 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
     } while(quant_disponivel > 0);
     
     quant_jog++; // proximo jogador
+    linha_atual = 1;
     
   } while(quant_pecas > 0);
 
-  desaloca_tam(disponivel);
+  free(disponivel);
 
   return;
 }

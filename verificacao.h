@@ -1,1 +1,1 @@
-int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha, int coluna);
+int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha, int coluna, int linha_atual);
