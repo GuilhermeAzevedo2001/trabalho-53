@@ -82,7 +82,7 @@ void imprimir_disponivel(char *disponivel, int quant) {
   return;
 }
 
-void pecas_disponiveis(char **pecas, char *disponivel) {
+void pecas_disponiveis(char **pecas, char *disponivel, int quant) {
   
   int linha;
   int coluna;
@@ -90,7 +90,7 @@ void pecas_disponiveis(char **pecas, char *disponivel) {
   srand(time(NULL));
   coluna = rand() % 36;
 
-  for(int i = 0; i < 12; i += 2) {    
+  for(int i = 0; i < quant; i += 2) {    
     while(coluna % 2 != 0) {
       coluna = rand() % 36;      
       //printf("\n%d\n", coluna);
@@ -243,7 +243,7 @@ void usuario(void) {
 
   free(seleciona);
 
-  preenche(pecas);  // preenche a matriz com a peças do jogo
+  preenche(pecas);  // preenche a matriz com as peças do jogo
   quadro_pecas(pecas, tabuleiro, jogadores, num_jog, mode);
   
   for(int i = 0; i < num_jog; i++) {

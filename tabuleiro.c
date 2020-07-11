@@ -400,11 +400,11 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
             printf("Jogada invalida\n");
             padrao();
           }
-        }
-        //linha_atual = 0; 
+        }        
       } while(!valida);  // enquanto a jogada não for valida
 
       if(sair == 1) { // troca o jogador
+        valida = 1;
         linha_atual = 1;
         break;
       }
