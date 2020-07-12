@@ -1,2 +1,2 @@
-void alocar_tam(char *vet, int tam);
-void desaloca_tam(char *vet);
+void alocar_int(int *vet, int tam);
+void desaloca_int(int *vet);

@@ -126,7 +126,6 @@ void pecas_disponiveis(char **pecas, char *disponivel, int quant, int num_jog) {
 void usuario(void) {
 
 // Inserir usuarios 
-
   int num_jog = 0;
   char *quant_jog;
   char **jogadores;

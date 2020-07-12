@@ -226,7 +226,7 @@ void cont_pontos(char **tabuleiro, int pos1, int pos2, int linha, int coluna, in
     }
   }
   if(qtd_pecas_seguidas == 6){
-    pontos[quant_jog]+=6;
+    pontos[quant_jog] += 6;
     qtd_pecas_seguidas = 0;
   }
   if(soma == 0) {
@@ -277,7 +277,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
   for(i = 0; i < num_jog; i++) {
     num_sorteio[i] = 0; 
   }
-  
+
   pontos = (int *) malloc(sizeof(char) * num_jog);
   if(pontos == NULL) {
     vermelho();
@@ -419,7 +419,6 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
               for(j = 0; j < 36; j += 2) {
                 if(pecas[i][j] == jogada[0] && pecas[i][j + 1] == jogada[1]) {
                   existe++;
-                  cheat = 1;
                   break;
                 }
               }
@@ -432,8 +431,6 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
             padrao();
           }
         } while(!existe);
-        
-        cheat = 0;
          
         do {
           negrito();

@@ -2,19 +2,25 @@
 #include <stdlib.h>
 #include "cores.h"
 
-void alocar_tam(char *vet, int tam) {
+void alocar_int(int *vet, int tam) {
 
-  vet = (char *) realloc(vet, sizeof(char) * tam);
+  // Alocação de "tam" posiçoes
+  vet = (int *) malloc(sizeof(int) * tam);
   if(vet == NULL) {
     vermelho();
     printf("Não foi possivel alocar memoria\n");
     padrao();
     exit(1);
   }
+  // Iniciliza as posiçoes alocada 
+  for(int i = 0; i < tam; i++) {
+    vet[i] = 0;
+  }
+  
   return;
 }
 
-void desaloca_tam(char *vet) {
+void desaloca_int(int *vet) {
 
   free(vet);
 
