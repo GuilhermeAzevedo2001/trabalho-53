@@ -84,42 +84,41 @@ void imprimir_disponivel(char *disponivel, int quant) {
 
 void pecas_disponiveis(char **pecas, char *disponivel, int quant, int num_jog) {
   
-  int linha;
-  int coluna;
-  int static vezes = 0;
+  int linha = 0;
+  int coluna = 0;
+  int static sorteio = 0;
   int aux_quant;
   int aux_falta;
+  
+  aux_quant = 12 - quant;
+  aux_falta = quant;
 
-  srand(time(NULL));
+  if(sorteio != 0) {
+    srand(time(NULL));
+  }
+
   coluna = rand() % 36;
 
-  if(vezes < num_jog) {
-    aux_quant = 12;  
-    aux_falta = 0;
-    vezes++;
-  }
-  else {
-    aux_quant = 12 - quant;
-    aux_falta = quant;
-  }
-
-  for(int i = 0; i < aux_quant; i += 2) {    
+  for(int i = 0; i < aux_quant; i += 2) {       
     while(coluna % 2 != 0) {
       coluna = rand() % 36;      
       //printf("\n%d\n", coluna);
     }
-
+  
     linha = rand() % 6;
 
     if(pecas[linha][coluna] != ' ') {
+      //printf("linha = %d\n", linha);
+      //printf("coluna = %d\n", coluna);
       disponivel[aux_falta] = pecas[linha][coluna];
       disponivel[aux_falta + 1] = pecas[linha][coluna + 1];
+      aux_falta += 2;
     }
     else {
       i += -2;    // Decrementa i para procura outra posição
     }
-    coluna = rand() % 36;
-    aux_falta += 2;
+    coluna = rand() % 36; 
+    sorteio++;   
   }
   return;
 }
