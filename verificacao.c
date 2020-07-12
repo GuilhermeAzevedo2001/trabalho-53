@@ -126,108 +126,155 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
 
   int static ref_linha;
   int static ref_coluna;
-  int static jog;
-  int static set = 0;
+  int static first = 0;
+  int static input = 0;
+  int static valida = 0;
+  int static set;
+  
   int verifica_linha;
   int verifica_coluna;
-  int k, j;
+  int quant_jog = 0;
+  
 
-  if(linha_atual == 1) {
-    jog = 0;
+  if(linha_atual == 1 || valida == 1) {
     set = 0;
+    input = 1;
+    if(first == 0) {
+      ref_linha = 1;
+      ref_coluna = 2;  
+      first++;
+      valida = 0;
+      return 1;      
+    }
     verifica_linha = ver_linha(tabuleiro, jogada, pos1, pos2, coluna);
     if(verifica_linha == 1) {
-      if(pos1 == 0) {
-        ref_linha = 1;
+      quant_jog++;
+    }
+    else {
+      if(verifica_linha == 0) {
+        valida = 1;
+        return 0;
       }
-      else {
+    }
+    verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha);
+    if(verifica_coluna == 1) {
+      quant_jog++;
+    }
+    else {
+      if(verifica_coluna == 0) {
         ref_linha = pos1;
+        ref_coluna = pos2; 
+        valida = 1;
+        return 0;
       }
-      
-      if(pos2 == 0) {
-        ref_coluna = 2;
-      }
-      else {
-        ref_coluna = pos2;
-      }
-      jog++;
+    }
+    if(quant_jog > 0) {
+      valida = 0;
+      return 1;
+    }
+    else {
+      valida = 1;
+      return 0;
+    }
+  }
+  //printf("linha_atual = %d\n", linha_atual);
+  //printf("input = %d\n", input);
+  //printf("pos1 = %d\n", pos1);
+  //printf("pos2 = %d\n", pos2);
+  //printf("ref_linha = %d\n", ref_linha);
+  //printf("ref_coluna = %d\n", ref_coluna);
+
+  if(input == 1) { 
+    verifica_linha = ver_linha(tabuleiro, jogada, pos1, pos2, coluna);
+    if(verifica_linha == 1) {
+      quant_jog++;
     }
     else {
       if(verifica_linha == 0) {
         return 0;
       }
     }
-    verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha); 
+    verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha);
     if(verifica_coluna == 1) {
-      if(pos1 == 0) {
-        ref_linha = 1;
-      }
-      else {
-        ref_linha = pos1;
-      }
-      if(pos2 == 0) {
-        ref_coluna = 2;
-      }
-      else {
-        ref_coluna = pos2;
-      }
-      jog++;
+      quant_jog++;
     }
     else {
       if(verifica_coluna == 0) {
         return 0;
       }
     }
-    if(jog > 0) {
-      return 1;
+    if(quant_jog > 0) {
+      input++;
+      printf("set = %d\n", set);
+      if(pos1 == ref_linha) {
+        set = 1;
+        printf("set = %d\n", set);
+      }
+      if(pos2 == ref_coluna) {
+        set = 2;
+      }
+      return 1;      
     }
     else {
       return 0;
     }
   }
-
   //printf("set = %d\n", set);
-  //printf("ref linha - %d\n", ref_linha);
-  //printf("ref coluna - %d\n", ref_coluna);
-  //printf("pos1 - %d\n", pos1);
-  //printf("pos2 - %d\n", pos2);
-  if(ref_linha == pos1 && set == 0) {
-    set = 1;
-  }
-  else {
-    if(ref_coluna == pos2 && set == 0) {
-      set = 2;
-    }
-  }
-
+  quant_jog = 0;
   if(set == 1) {
-    if(ref_linha == pos1) {
+    if(pos1 == ref_linha) {
       verifica_linha = ver_linha(tabuleiro, jogada, pos1, pos2, coluna);
-      verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha); 
-      if(verifica_linha == 1 && (verifica_coluna == 1 || verifica_coluna == -1)) {
+      if(verifica_linha == 1) {
+        quant_jog++;
+      }
+      else {
+        if(verifica_linha == 0) {
+          return 0;
+        }
+      }
+      verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha);
+      if(verifica_coluna == 1) {
+        quant_jog++;
+      }
+      else {
+        if(verifica_coluna == 0) {
+          return 0;
+        }
+      }
+      if(quant_jog > 0) {
         return 1;
       }
-      else {        
-        return 0;        
+      else {
+        return 0;
       }
-    }
-    else {
-      return 0;
     }
   }
   if(set == 2) {
-    if(ref_coluna == pos2) {
+    if(pos2 == ref_coluna) {
       verifica_linha = ver_linha(tabuleiro, jogada, pos1, pos2, coluna);
-      verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha); 
-      if((verifica_linha == 1 || verifica_linha == -1) && verifica_coluna == 1) {
+      if(verifica_linha == 1) {
+        quant_jog++;
+      }
+      else {
+        if(verifica_linha == 0) {
+          return 0;
+        }
+      }
+      verifica_coluna = ver_coluna(tabuleiro, jogada, pos1, pos2, linha);
+      if(verifica_coluna == 1) {
+        quant_jog++;
+      }
+      else {
+        if(verifica_coluna == 0) {
+          return 0;
+        }
+      }
+      if(quant_jog > 0) {
         return 1;
       }
-      else {        
-        return 0;        
+      else {
+        return 0;
       }
-    }
-    else {
-      return 0;
     }
   }
   return 0;

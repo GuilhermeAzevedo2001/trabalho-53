@@ -200,9 +200,46 @@ void cheat_mode(char **pecas, char *disponivel, int quant_disponivel) {
   return;
 }
 
-void cont_pontos(char **tabuleiro, int pos1, int pos2, int *pontos) {
+void cont_pontos(char **tabuleiro, int pos1, int pos2, int linha, int coluna, int *pontos, int quant_jog) {
   
-  // Posições a direita da peça
+  int soma = 0;
+
+  // Posições a direita da peça 
+  if(pos2 != (coluna - 2) && tabuleiro[pos1][pos2 + 2] != ' ') {
+    for(int i = pos2; i < coluna; i += 2) {
+      if(tabuleiro[pos1][i] != ' ') {
+        soma++;
+      }
+    }
+  }
+  // Posições a esquerda
+  if(pos2 != 0 && tabuleiro[pos1][pos2 - 2] != ' ') {
+    for(int i = pos2; i >= 0; i += -2) {
+      if(tabuleiro[pos1][i] != ' ') {
+        soma++;
+      }
+    }
+  }
+  // Posição cima
+  if(pos1 != 0 && tabuleiro[pos1 - 1][pos2] != ' ') {
+    for(int i = pos1; i >= 0; i--) {
+      if(tabuleiro[i][pos2] != ' ') {
+        soma++;
+      }
+    }
+  }
+  // Posiçoes a baixo 
+  if(pos1 != (linha - 1) && tabuleiro[pos1 + 1][pos2] != ' ') {
+    for(int i = pos1; i < linha; i++) {
+      if(tabuleiro[i][pos2] != ' ') {
+        pontos[quant_jog]++;
+      }
+    }
+  }
+  
+  pontos[quant_jog] += soma;
+
+  return;
 }
 
 void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog, int mode) {
@@ -252,6 +289,9 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
     padrao();
     exit(1);
   }
+  for(i = 0; i < num_jog; i++) {
+    pontos[i] = 0; // Inicializa com 6 peças 
+  }
 
   // Aloca a primeiro linha e as duas colunas iniciais 
   tabuleiro = NULL;
@@ -283,10 +323,12 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
   int lim_linha = 1;  // Quantidade de linhas que o usuario pode escolher 
   int lim_coluna = 1; // Quantidade de colunas que o usuario pode escolher 
   int valida = 1; // Verifica se a jogada é valido
-  int linha_atual = 1;
+  int ult_linha = 0;
+  int ult_coluna = 0;
   int sair;
   int seleciona = 0;
   int flag = 0;
+  int linha_atual = 1;;
   
   do {    
     if(quant_jog == num_jog) {
@@ -301,7 +343,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       do {
         if(!valida) {
           imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
-        }      
+        }
         printf("------------------------\n");
         verde();
         printf("Jogada de ");
@@ -432,30 +474,24 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
           }                             
         } while(tabuleiro[i][j] != ' '); 
 
-        if(linha != 1 && tabuleiro[i][j] == ' ') {
-          valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna, linha_atual);  
-          linha_atual = 0;
-          if(!valida) {
-            vermelho();
-            printf("Jogada invalida\n");
-            padrao();
-          }
-        }        
+        valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna, linha_atual);    
+        linha_atual = 0;
+        if(!valida) {          
+          vermelho();
+          printf("Jogada invalida\n");
+          padrao();
+        }                
       } while(!valida);  // enquanto a jogada não for valida
 
       if(sair == 1) { // troca o jogador
         valida = 1;
-        linha_atual = 1;
+        linha_atual = 1;                   
         break;
       }
+
       tabuleiro[i][j] = jogada[0];
       tabuleiro[i][j + 1] = jogada[1];
-
-      // Contabiliza pontos linha
       
-      
-    
-
       // Apaga do vetor disponivel a peça jogada
       int k = 0, elimina = 0;
       for(i = 0; i < num_sorteio[quant_jog]; i += 2) {
@@ -491,7 +527,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       flag = 0;
       for(i = 0; i < coluna; i++) { 
         if(tabuleiro[0][i] != ' ') { // Se a linha mais superior não estiver vazia
-          //linha_superior += - 1;
+          ult_linha++;
           coluna_esquerda += -1;
           ref_linha++;
           flag = 1;
@@ -574,7 +610,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       flag = 0;
       for(i = 0; i < linha; i++) {
         if(tabuleiro[i][0] != ' ') {    // Se a coluna esquerda não estiver vazia
-          //coluna_esquerda += - 1;
+          ult_linha += 2;
           linha_superior += - 1;
           ref_coluna += 1;
           flag = 1;
@@ -647,6 +683,9 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       }
     } while(quant_disponivel > 0);
   
+    //printf("ult_linha = %d\n", ult_linha);
+    //printf("ult_coluna = %d\n", ult_coluna);
+
     quant_jog++; // proximo jogador
     linha_atual = 1;
     
