@@ -328,13 +328,16 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
   int sair;
   int seleciona = 0;
   int flag = 0;
-  int linha_atual = 1;;
+  int linha_atual = 1;
+
+  for(i = 0; i < num_jog; i++) {
+    pecas_disponiveis(pecas, disponivel[i], num_sorteio[i], num_jog);
+  }
   
   do {    
     if(quant_jog == num_jog) {
       quant_jog = 0;
     }
-    pecas_disponiveis(pecas, disponivel[quant_jog], num_sorteio[quant_jog], num_jog);
     if(num_sorteio[quant_jog] != 0) {
       imprimir_tabuleiro(tabuleiro, linha, coluna, linha_superior, coluna_esquerda);
     }
@@ -474,13 +477,17 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
           }                             
         } while(tabuleiro[i][j] != ' '); 
 
-        valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna, linha_atual);    
-        linha_atual = 0;
-        if(!valida) {          
+        valida = jog_valida(tabuleiro, jogada, i, j, linha, coluna, linha_atual);   
+        if(valida && linha_atual) {
+          ult_linha = i;
+          ult_coluna = j;        
+        }        
+        if(!valida) {
           vermelho();
           printf("Jogada invalida\n");
           padrao();
-        }                
+        }               
+        linha_atual = 0; 
       } while(!valida);  // enquanto a jogada não for valida
 
       if(sair == 1) { // troca o jogador
@@ -610,7 +617,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       flag = 0;
       for(i = 0; i < linha; i++) {
         if(tabuleiro[i][0] != ' ') {    // Se a coluna esquerda não estiver vazia
-          ult_linha += 2;
+          ult_coluna += 2;
           linha_superior += - 1;
           ref_coluna += 1;
           flag = 1;
@@ -683,8 +690,11 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
       }
     } while(quant_disponivel > 0);
   
-    //printf("ult_linha = %d\n", ult_linha);
-    //printf("ult_coluna = %d\n", ult_coluna);
+    printf("ult_linha = %d\n", ult_linha);
+    printf("ult_coluna = %d\n", ult_coluna);
+
+    pecas_disponiveis(pecas, disponivel[quant_jog], num_sorteio[quant_jog], num_jog);
+    num_sorteio[quant_jog] = 12;
 
     quant_jog++; // proximo jogador
     linha_atual = 1;

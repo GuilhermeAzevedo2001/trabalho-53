@@ -90,6 +90,9 @@ void pecas_disponiveis(char **pecas, char *disponivel, int quant, int num_jog) {
   int aux_quant;
   int aux_falta;
 
+  srand(time(NULL));
+  coluna = rand() % 36;
+
   if(vezes < num_jog) {
     aux_quant = 12;  
     aux_falta = 0;
@@ -99,9 +102,6 @@ void pecas_disponiveis(char **pecas, char *disponivel, int quant, int num_jog) {
     aux_quant = 12 - quant;
     aux_falta = quant;
   }
-
-  srand(time(NULL));
-  coluna = rand() % 36;
 
   for(int i = 0; i < aux_quant; i += 2) {    
     while(coluna % 2 != 0) {
