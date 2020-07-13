@@ -3,8 +3,8 @@
 #include <string.h>
 #include <time.h>
 #include <ctype.h>
-#include "cores.h"
 #include "tabuleiro.h"
+#include "cores.h"
 
 int is_alpha(char *s) {     // Verifica numeros e letras
   
@@ -26,6 +26,7 @@ void preenche(char **pecas) {
   int i, j;
   int k = 0;
   
+  //numeracao das pecas
   for(i = 0; i < 6; i++) {
     for(j = 0; j < 36; j += 2) {
       pecas[i][j] = letra;
@@ -41,91 +42,10 @@ void preenche(char **pecas) {
   }
   return;
 }
- 
-void imprimir_disponivel(char *disponivel, int quant) {
-
-  for(int i = 0; i < quant; i += 2) {
-    switch(disponivel[i + 1]) {
-      case '1': 
-        verde();
-        printf("%c%c ", disponivel[i], disponivel[i + 1]);
-        padrao();
-        break;
-      case '2': 
-        vermelho();
-        printf("%c%c ", disponivel[i], disponivel[i + 1]);
-        padrao();
-        break;
-      case '3': 
-        amarelo();
-        printf("%c%c ", disponivel[i], disponivel[i + 1]);
-        padrao();
-        break;
-      case '4': 
-        azul();
-        printf("%c%c ", disponivel[i], disponivel[i + 1]);
-        padrao();
-        break; 
-      case '5': 
-        roxo();
-        printf("%c%c ", disponivel[i], disponivel[i + 1]);
-        padrao();
-        break; 
-      case '6': 
-        marinho();
-        printf("%c%c ", disponivel[i], disponivel[i + 1]);
-        padrao();
-        break;      
-    } 
-  }
-  printf("\n");
-  return;
-}
-
-void pecas_disponiveis(char **pecas, char *disponivel, int quant, int num_jog) {
-  
-  int linha = 0;
-  int coluna = 0;
-  int static sorteio = 0;
-  int aux_quant;
-  int aux_falta;
-  
-  aux_quant = 12 - quant;
-  aux_falta = quant;
-
-  if(sorteio != 0) {
-    srand(time(NULL));
-  }
-
-  coluna = rand() % 36;
-
-  for(int i = 0; i < aux_quant; i += 2) {       
-    while(coluna % 2 != 0) {
-      coluna = rand() % 36;      
-      //printf("\n%d\n", coluna);
-    }
-  
-    linha = rand() % 6;
-
-    if(pecas[linha][coluna] != ' ') {
-      //printf("linha = %d\n", linha);
-      //printf("coluna = %d\n", coluna);
-      disponivel[aux_falta] = pecas[linha][coluna];
-      disponivel[aux_falta + 1] = pecas[linha][coluna + 1];
-      aux_falta += 2;
-    }
-    else {
-      i += -2;    // Decrementa i para procura outra posição
-    }
-    coluna = rand() % 36; 
-    sorteio++;   
-  }
-  return;
-}
 
 void usuario(void) {
 
-// Inserir usuarios 
+// Insercao dos usuarios 
   int num_jog = 0;
   char *quant_jog;
   char **jogadores;
@@ -139,9 +59,9 @@ void usuario(void) {
     padrao();
     exit(1);
   }
-
-  printf("Quantidade de jogadores: ");
   
+  //inicializacao da quantidade de jogadores
+  printf("Quantidade de jogadores: ");
   do {
     scanf("%s", quant_jog);
     if(is_alpha(quant_jog) == 1) {
@@ -152,7 +72,7 @@ void usuario(void) {
     }
     else {
       num_jog = atoi(quant_jog);
-      if(num_jog < 1 || num_jog > 18) {
+      if(num_jog < 1 || num_jog > 4) {
         vermelho();
         printf("Quantidade de jogadores invalida, digite novamente: ");
         padrao();      
@@ -160,7 +80,6 @@ void usuario(void) {
     }
   } while((is_alpha(quant_jog) == 1) || (num_jog < 1 || num_jog > 18));
 
-  num_jog = atoi(quant_jog);
   free(quant_jog);    
 
   jogadores = (char **) malloc(sizeof(char *) * num_jog);
@@ -195,7 +114,8 @@ void usuario(void) {
       exit(1);
     }
   }
-
+  
+  //insercao de nomes para os jogadores
   int num_letra;
   for(int i = 0; i < num_jog; i++) {
     verde();
@@ -216,9 +136,10 @@ void usuario(void) {
       exit(1);
     }
   }
-
+  
+  //inicializacao para jogar em cheat mode
   verde();
-  printf("Cheat mode\n");
+  printf("Desejam jogar em 'Cheat mode'?\n");
   padrao();
   printf("1 - Sim\n");
   printf("2 - Não\n");
@@ -235,7 +156,8 @@ void usuario(void) {
     padrao();
     exit(1);
   }
-
+  
+  //condicionais para entradas de erro
   do {
     scanf("%s", seleciona);    
     if(is_alpha(seleciona) == 1) {
@@ -261,6 +183,10 @@ void usuario(void) {
   for(int i = 0; i < num_jog; i++) {
     free(jogadores[i]);
   }
+  for(int i = 0; i < 6; i++) {
+    free(pecas[i]);
+  }
+  free(pecas);
   free(jogadores);
 
   return;  

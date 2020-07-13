@@ -9,8 +9,6 @@
 *  a peça atual 
 */
 
-// pos1 = i     pos2 = j     , linha é quant de linhas da matriz
-
 int ver_coluna(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha) {
 
   int valida = 0;
@@ -134,7 +132,6 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
   int verifica_linha;
   int verifica_coluna;
   int quant_jog = 0;
-  
 
   if(linha_atual == 1 || valida == 1) {
     set = 0;
@@ -161,15 +158,15 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
       quant_jog++;
     }
     else {
-      if(verifica_coluna == 0) {
-        ref_linha = pos1;
-        ref_coluna = pos2; 
+      if(verifica_coluna == 0) {        
         valida = 1;
         return 0;
       }
     }
     if(quant_jog > 0) {
       valida = 0;
+      ref_linha = pos1;
+      ref_coluna = pos2; 
       return 1;
     }
     else {
@@ -177,13 +174,8 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
       return 0;
     }
   }
-  //printf("linha_atual = %d\n", linha_atual);
-  //printf("input = %d\n", input);
-  //printf("pos1 = %d\n", pos1);
-  //printf("pos2 = %d\n", pos2);
-  //printf("ref_linha = %d\n", ref_linha);
-  //printf("ref_coluna = %d\n", ref_coluna);
 
+  quant_jog = 0;
   if(input == 1) { 
     verifica_linha = ver_linha(tabuleiro, jogada, pos1, pos2, coluna);
     if(verifica_linha == 1) {
@@ -205,10 +197,8 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
     }
     if(quant_jog > 0) {
       input++;
-      printf("set = %d\n", set);
       if(pos1 == ref_linha) {
         set = 1;
-        printf("set = %d\n", set);
       }
       if(pos2 == ref_coluna) {
         set = 2;
@@ -219,7 +209,7 @@ int jog_valida(char **tabuleiro, char jogada[10], int pos1, int pos2, int linha,
       return 0;
     }
   }
-  //printf("set = %d\n", set);
+ 
   quant_jog = 0;
   if(set == 1) {
     if(pos1 == ref_linha) {

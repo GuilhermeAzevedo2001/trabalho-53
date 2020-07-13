@@ -4,11 +4,90 @@
 #include <time.h>
 #include "cores.h"
 #include "usuario.h"
-#include "alocacao.h"
 #include "verificacao.h"
+
+void pecas_disponiveis(char **pecas, char *disponivel, int quant, int num_jog) {
+  
+  int linha = 0;
+  int coluna = 0;
+  int static sorteio = 0;
+  int aux_quant;
+  int aux_falta;
+  
+  aux_quant = 12 - quant;
+  aux_falta = quant;
+
+  if(sorteio == 0) {
+    srand(time(NULL));
+  }
+  sorteio = !sorteio;
+
+  coluna = rand() % 36;
+
+  for(int i = 0; i < aux_quant; i += 2) {       
+    while(coluna % 2 != 0) {
+      coluna = rand() % 36;      
+    }
+  
+    linha = rand() % 6;
+
+    if(pecas[linha][coluna] != ' ') {
+      disponivel[aux_falta] = pecas[linha][coluna];
+      disponivel[aux_falta + 1] = pecas[linha][coluna + 1];
+      aux_falta += 2;
+    }
+    else {
+      i += -2;    // Decrementa i para procura outra posição
+    }
+    coluna = rand() % 36;   
+  }
+  return;
+}
+
+void imprimir_disponivel(char *disponivel, int quant) {
+
+  //impressao de pecas disponiveis para jogada
+  for(int i = 0; i < quant; i += 2) {
+    switch(disponivel[i + 1]) {
+      case '1': 
+        verde();
+        printf("%c%c ", disponivel[i], disponivel[i + 1]);
+        padrao();
+        break;
+      case '2': 
+        vermelho();
+        printf("%c%c ", disponivel[i], disponivel[i + 1]);
+        padrao();
+        break;
+      case '3': 
+        amarelo();
+        printf("%c%c ", disponivel[i], disponivel[i + 1]);
+        padrao();
+        break;
+      case '4': 
+        azul();
+        printf("%c%c ", disponivel[i], disponivel[i + 1]);
+        padrao();
+        break; 
+      case '5': 
+        roxo();
+        printf("%c%c ", disponivel[i], disponivel[i + 1]);
+        padrao();
+        break; 
+      case '6': 
+        marinho();
+        printf("%c%c ", disponivel[i], disponivel[i + 1]);
+        padrao();
+        break;      
+    } 
+  }
+  printf("\n");
+  return;
+}
 
 void imprimir_tabuleiro(char **tabuleiro, int linha, int coluna, int linha_superior, int coluna_esquerda) {
 
+//laços para impressao do tabuleiro
   for(int i = 0; i < coluna; i += 2) {
     if(linha_superior < 0) {
       printf("   %d", linha_superior);
@@ -94,7 +173,8 @@ int opcoes(void) {
     padrao();
     exit(1);
   }
- 
+  
+  //funcoes para o comando do jogador na sua respectiva vez
   verde();
   printf("Opcoes:\n");
   padrao();
@@ -105,7 +185,8 @@ int opcoes(void) {
   verde();
   printf("Qual a opcao desejada: ");
   padrao();
-
+ 
+ //caso para entradas de erro
   do {
     flag = 0;
     scanf("%s", entrada);
@@ -136,7 +217,8 @@ void troca_peca(char **pecas, char *disponivel, int quant_disponivel) {
   char jogada[10];
   int existe = 0;
   int i, j;
-
+  
+  //entradas para trocar as pecas
   verde();
   printf("Qual peca deseja trocar: ");
   padrao();
@@ -150,6 +232,7 @@ void troca_peca(char **pecas, char *disponivel, int quant_disponivel) {
         break;
       }      
     }
+    //entrada de erro para a troca de peca
     if(!existe) {
       vermelho();
       printf("A peca que deseja trocar nao existe. Escolha novamente: ");
@@ -186,6 +269,7 @@ void troca_peca(char **pecas, char *disponivel, int quant_disponivel) {
 
 void cont_pontos(char **tabuleiro, int pos1, int pos2, int linha, int coluna, int *pontos, int quant_jog) {
   
+  //nesta funcao, é feita a contagem dos pontos 
   int soma = 0;
   int qtd_pecas_seguidas = 0;
 
@@ -331,7 +415,6 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
     pecas_disponiveis(pecas, disponivel[i], num_sorteio[i], num_jog);
     num_sorteio[i] = 12;
   }
-  
   do {    
     if(quant_jog == num_jog) {
       quant_jog = 0;
@@ -404,16 +487,13 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         do { // Verifica se a peça selecionada pelo usuario existe          
           setbuf(stdin, NULL);
           fgets(jogada, 10, stdin);  
-
-          printf("existe = %d\n", existe);
+          
           for(i = 0; i < quant_disponivel; i += 2) {
             if((jogada[0] == disponivel[quant_jog][i]) && (jogada[1] == disponivel[quant_jog][i + 1])) {
               existe++;
               break;
             }      
           }
-          printf("existe = %d\n", existe);
-          printf("mode = %d\n", mode);
           if(mode == 1) {
             for(i = 0; i < 6 && !cheat; i++) { 
               for(j = 0; j < 36; j += 2) {
@@ -423,8 +503,7 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
                 }
               }
             }
-          }             
-          printf("existe = %d\n", existe);            
+          }                        
           if(!existe) {
             vermelho();
             printf("Peca invalida, escolha novamente: "); 
@@ -552,6 +631,9 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
             pecas[i][j] = ' ';
             pecas[i][j + 1] = ' ';
             quant_pecas--;
+            if(quant_pecas == 0) {
+              break;
+            }
             flag = 1;
           }
         }    
@@ -718,16 +800,27 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
         printf("(score: %d)\n", pontos[i]);
         padrao();
       }
-
+      
+      //caso para fim de jogo
       if(quant_disponivel == 0) {
         vermelho();
         printf("Nao existem mais pecas disponiveis !!\n");
         padrao();
       }
     } while(quant_disponivel > 0);
-  
-    printf("ult_linha = %d\n", ult_linha);
-    printf("ult_coluna = %d\n", ult_coluna);
+
+    if(quant_pecas == 0) {
+      int maior = pontos[0];
+      int ganhador = 0;
+      for(i = 1; i < num_jog; i++) {
+        if(pontos[i] > maior) {
+          maior = pontos[i];
+          ganhador = i;
+        }
+      }
+      printf("%s é o vencedor :)\n", jogadores[i]);
+      break;
+    }
 
     if(num_sorteio[quant_jog] <= 10) {
       cont_pontos(tabuleiro, ult_linha, ult_coluna, linha, coluna, pontos, quant_jog);
@@ -741,7 +834,12 @@ void quadro_pecas(char **pecas, char **tabuleiro, char **jogadores, int num_jog,
     
   } while(quant_pecas > 0);
 
+  for(i = 0; i < num_jog; i++) {
+    free(disponivel[i]);    
+  }
   free(disponivel);
+  free(pontos);
+  free(num_sorteio);
 
   return;
 }
